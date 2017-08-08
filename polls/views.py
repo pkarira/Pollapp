@@ -1,4 +1,8 @@
+from time import timezone
+
 from django.http import HttpResponse
+
+from polls.models import Question, Choice
 
 
 def index(request):
@@ -16,3 +20,9 @@ def results(request, question_id):
 
 def vote(request, question_id):
     return HttpResponse("You're voting on question %s." % question_id)
+
+
+def addQuestion(question, choice1, choice2):
+    q = Question(question_text="What's new?", pub_date=timezone.now())
+    q.save()
+    q.choice_set.create(choice_text='Not much', votes=0)
