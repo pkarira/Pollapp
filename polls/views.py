@@ -6,7 +6,13 @@ from polls.models import Question, Choice
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    s = ""
+    for question in Question.objects.all():
+        s += question.question_text + " "
+        for choice in question.choice_set.all():
+            s += choice.choice_text + " "
+        s += "\n"
+    return HttpResponse(s)
 
 
 def detail(request, question_id):
@@ -23,6 +29,17 @@ def vote(request, question_id):
 
 
 def addQuestion(question, choice1, choice2):
-    q = Question(question_text="What's new?", pub_date=timezone.now())
-    q.save()
-    q.choice_set.create(choice_text='Not much', votes=0)
+    ques = Question(question_text=question, pub_date=timezone.now())
+    ques.save()
+    ques.choice_set.create(choice_text=choice1, votes=0)
+    ques.choice_set.create(choice_text=choice2, votes=0)
+
+
+def getQuestions(request):
+    s = ""
+    for question in Question.objects.all():
+        s += question.question_text + " "
+        for choice in question.choice_set.all:
+            s += choice.choice_text + " "
+        s += "\n"
+    return HttpResponse(s)
