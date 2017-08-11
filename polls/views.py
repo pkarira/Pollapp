@@ -1,6 +1,7 @@
 from time import timezone
 import json
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from polls.models import Question, Choice
 
@@ -36,14 +37,18 @@ def totalResults(request):
     return HttpResponse(json.dumps(outerJson), content_type="application/json")
 
 
-def vote(request, question_id, choice_id):
-    selected_choice = Question.objects.get(pk=question_id).choice_set(pk=choice_id)
-    selected_choice.votes += 1
-    selected_choice.save()
-    return HttpResponse("You're voting on question %s." % question_id)
+@csrf_exempt
+def vote(request):
+    if (request.method == "POST"):
+        body = json.loads(request.body)
+        question_id = int(body["question_id"])
+        choice_id = int(body["choice_id"])
+        selected_choice = Question.objects.get(pk=question_id).choice_set.get(pk=choice_id)
+        selected_choice.votes += 1
+        selected_choice.save()
 
 
-def addQuestion(question, choice1, choice2):
+def addQuestion(request, question, choice1, choice2):
     ques = Question(question_text=question, pub_date=timezone.now())
     ques.save()
     ques.choice_set.create(choice_text=choice1, votes=0)
