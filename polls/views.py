@@ -1,4 +1,3 @@
-from time import timezone
 import json
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -46,13 +45,22 @@ def vote(request):
         selected_choice = Question.objects.get(pk=question_id).choice_set.get(pk=choice_id)
         selected_choice.votes += 1
         selected_choice.save()
+        return HttpResponse("Done")
 
 
-def addQuestion(request, question, choice1, choice2):
-    ques = Question(question_text=question, pub_date=timezone.now())
-    ques.save()
-    ques.choice_set.create(choice_text=choice1, votes=0)
-    ques.choice_set.create(choice_text=choice2, votes=0)
+@csrf_exempt
+def addQuestion(request):
+    if (request.method == "POST"):
+        body = json.loads(request.body)
+        question = body["question"]["text"]
+        choice1 = body["choice"][0]["text"]
+        choice2 = body["choice"][1]["text"]
+        from django.utils import timezone
+        ques = Question(question_text=question, pub_date=timezone.now())
+        ques.save()
+        ques.choice_set.create(choice_text=choice1, votes=0)
+        ques.choice_set.create(choice_text=choice2, votes=0)
+        return HttpResponse("Done")
 
 
 def getQuestions(request):
