@@ -10,4 +10,6 @@ urlpatterns = [
     url(r'^questions$', views.getQuestions),
     url(r'^vote$', views.vote),
     url(r'^add$', views.addQuestion),
+    url(r'^register$', views.register),
+    url(r'^login', views.login),
 ]
