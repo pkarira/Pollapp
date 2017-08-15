@@ -1,9 +1,10 @@
 import json
 
-from django.contrib.auth import logout, login
+from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import authentication_classes, permission_classes
 
@@ -16,6 +17,7 @@ def index(request):
 
 def detail(request, question_id):
     return HttpResponse("You're looking at question %s." % question_id)
+
 
 def totalResults(request):
     outerJson = {}
@@ -54,6 +56,31 @@ def vote(request):
 
 
 @csrf_exempt
+@authentication_classes([])
+@permission_classes([])
+def login(request):
+    if (request.method == "POST"):
+        body = json.loads(request.body)
+        name = body["name"]
+        password = body["password"]
+        user = authenticate(username=name, password=password)
+        outerJson = {}
+        if user is not None:
+            token = Token.objects.create(user=user)
+            outerJson["status"] = 1
+            outerJson["token"] = token
+            return HttpResponse(json.dumps(outerJson))
+        else:
+            outerJson["status"] = 0
+            outerJson["token"] = "please register"
+            return HttpResponse(json.dumps(outerJson))
+
+
+def logout(request):
+    request.user.auth_token.delete()
+    return HttpResponse(status=status.HTTP_200_OK)
+
+@csrf_exempt
 def addQuestion(request):
     if (request.method == "POST"):
         body = json.loads(request.body)
@@ -79,10 +106,7 @@ def register(request):
         password = body["password"]
         user = User.objects.create_user(name, email, password)
         user.save()
-        token = Token.objects.create(user=user)
-        outerJson = {}
-        outerJson["token"]=token
-        return HttpResponse(json.dumps(outerJson))
+        return HttpResponse("registered")
 
 
 def getQuestions(request):
