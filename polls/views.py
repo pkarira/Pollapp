@@ -66,19 +66,21 @@ def login(request):
         user = authenticate(username=name, password=password)
         outerJson = {}
         if user is not None:
-            token = Token.objects.create(user=user)
+            Token.objects.create(user=user)
+            token = Token.objects.get(user=user)
             outerJson["status"] = 1
-            outerJson["token"] = token
+            outerJson["token"] = token.key
             return HttpResponse(json.dumps(outerJson))
         else:
             outerJson["status"] = 0
             outerJson["token"] = "please register"
-            return HttpResponse(json.dumps(outerJson))
+            return HttpResponse(json.dumps(outerJson), content_type="application/json")
 
 
 def logout(request):
     request.user.auth_token.delete()
     return HttpResponse(status=status.HTTP_200_OK)
+
 
 @csrf_exempt
 def addQuestion(request):
@@ -117,7 +119,7 @@ def getQuestions(request):
     singleChoice = {}
     singleQuestion = {}
     for question in Question.objects.all():
-        singleQuestion["questions"] = question.question_text
+        singleQuestion["question"] = question.question_text
         singleQuestion["id"] = question.id
         for choice in question.choice_set.all():
             singleChoice["text"] = choice.choice_text
