@@ -19,6 +19,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+
 import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,36 +31,20 @@ Button button ;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         button = (Button)findViewById(R.id.button);
+        final Register register =new Register("p","p","p");
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Call().execute();
+                api.Factory.getInstance().register(register).enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                        Toast.makeText(getApplicationContext(),response.body().toString(),Toast.LENGTH_LONG).show();
+                    }
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                    }
+                });
             }
         });
-}
-class Call extends AsyncTask<Void, Void, String> {
-    Response response = null;
-
-    @Override
-    protected String doInBackground(Void... params) {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("http://172.25.33.160:8080/polls/5/vote/")
-                .build();
-        try {
-            response = client.newCall(request).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return String.valueOf(response);
-    }
-
-    protected void onPostExecute(String feed) {
-        try {
-            Log.e("re",response.body().string());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
 }
