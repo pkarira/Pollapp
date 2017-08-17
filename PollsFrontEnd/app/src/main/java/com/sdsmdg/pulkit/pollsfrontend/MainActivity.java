@@ -25,26 +25,47 @@ import retrofit2.Callback;
 import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
 
 public class MainActivity extends AppCompatActivity {
-Button button ;
+    Button button1;
+    Button button2;
+    String token;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        button = (Button)findViewById(R.id.button);
-        final Register register =new Register("p","p","p");
-        button.setOnClickListener(new View.OnClickListener() {
+        button1 = (Button) findViewById(R.id.button);
+        final Register register = new Register("p", "p", "p");
+        final Register login = new Register("p", "p", "p");
+        button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 api.Factory.getInstance().register(register).enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, retrofit2.Response<String> response) {
-                        Toast.makeText(getApplicationContext(),response.body().toString(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), response.body().toString(), Toast.LENGTH_LONG).show();
                     }
+
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                     }
                 });
             }
         });
-}
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                api.Factory.getInstance().login(login).enqueue(new Callback<Token>() {
+                    @Override
+                    public void onResponse(Call<Token> call, retrofit2.Response<Token> response) {
+                        if (response.body().getStatus() == 1)
+                            token = response.body().getToken();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Token> call, Throwable t) {
+                    }
+                });
+            }
+        });
+    }
 }

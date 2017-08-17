@@ -21,7 +21,7 @@ public interface api {
     Call<String> register(@Body Register reg);
 
     @POST("polls/login")
-    Call<String> login(@Body Register reg);
+    Call<Token> login(@Body Register reg);
 
     class Factory {
         public static api services = null;
