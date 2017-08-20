@@ -27,7 +27,7 @@ import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
 public class MainActivity extends AppCompatActivity {
     Button button1;
     Button button2;
-    String token;
+    public static String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +58,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<Token> call, retrofit2.Response<Token> response) {
                         if (response.body().getStatus() == 1)
-                            token = response.body().getToken();
+                            token = " Token "+response.body().getToken()+" ";
                     }
-
                     @Override
                     public void onFailure(Call<Token> call, Throwable t) {
                     }

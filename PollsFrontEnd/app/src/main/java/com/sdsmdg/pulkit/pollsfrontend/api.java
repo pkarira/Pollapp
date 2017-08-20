@@ -7,6 +7,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -22,6 +23,9 @@ public interface api {
 
     @POST("polls/login")
     Call<Token> login(@Body Register reg);
+
+    @POST("polls/questions")
+    Call<Questions> getQuestions(@Header("Authorization") String token);
 
     class Factory {
         public static api services = null;
