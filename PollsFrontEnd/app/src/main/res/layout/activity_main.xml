@@ -64,4 +64,10 @@
         android:ems="10"
         android:inputType="textEmailAddress" />
 
+    <FrameLayout
+        android:id="@+id/fragment"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"/>
+
 </RelativeLayout>

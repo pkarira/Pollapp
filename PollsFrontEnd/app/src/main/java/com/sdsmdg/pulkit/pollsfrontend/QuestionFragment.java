@@ -3,7 +3,7 @@ package com.sdsmdg.pulkit.pollsfrontend;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +19,12 @@ public class QuestionFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private OnFragmentInteractionListener mListener;
     private Questions questions;
-    int c=0;
+    int c = 0;
+
     public QuestionFragment() {
         // Required empty public constructor
     }
+
     public static QuestionFragment newInstance(String param1, String param2) {
         QuestionFragment fragment = new QuestionFragment();
         Bundle args = new Bundle();
@@ -35,39 +37,39 @@ public class QuestionFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        api.Factory.getInstance().getQuestions(MainActivity.token).enqueue(new Callback<Questions>() {
-            @Override
-            public void onResponse(Call<Questions> call, retrofit2.Response<Questions> response) {
-                questions=response.body();
-                Toast.makeText(getContext(),questions+" ",Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onFailure(Call<Questions> call, Throwable t) {
-            }
-        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_question, container, false);
-        final TextView textView=(TextView)view.findViewById(R.id.question);
-        final Button choice1=(Button)view.findViewById(R.id.choice);
-        final Button choice2=(Button)view.findViewById(R.id.choice2);
-        Button next =(Button)view.findViewById(R.id.next);
-        textView.setText(questions.getData().getQuestion().get(0).getQuestion());
-        choice1.setText(questions.getData().getQuestion().get(0).getChoices().get(0).getText());
-        choice2.setText(questions.getData().getQuestion().get(0).getChoices().get(1).getText());
-        next.setOnClickListener(new View.OnClickListener() {
+        final View view = inflater.inflate(R.layout.fragment_question, container, false);
+        final TextView textView = (TextView) view.findViewById(R.id.question);
+        final Button choice1 = (Button) view.findViewById(R.id.choice);
+        final Button choice2 = (Button) view.findViewById(R.id.choice2);
+        final Button next = (Button) view.findViewById(R.id.next);
+        api.Factory.getInstance().getQuestions(MainActivity.token).enqueue(new Callback<Questions>() {
             @Override
-            public void onClick(View v) {
-                if(c<questions.getData().getQuestion().size())
-                {
-                    c++;
-                    textView.setText(questions.getData().getQuestion().get(c).getQuestion());
-                    choice1.setText(questions.getData().getQuestion().get(c).getChoices().get(0).getText());
-                    choice2.setText(questions.getData().getQuestion().get(c).getChoices().get(1).getText());
-                }
+            public void onResponse(Call<Questions> call, retrofit2.Response<Questions> response) {
+                questions = response.body();
+                Toast.makeText(getActivity(), response.body().getData().getQuestion().get(0).getQuestion().toString(), Toast.LENGTH_SHORT).show();
+                textView.setText(questions.getData().getQuestion().get(0).getQuestion());
+                choice1.setText(questions.getData().getQuestion().get(0).getChoices().get(0).getText());
+                choice2.setText(questions.getData().getQuestion().get(0).getChoices().get(1).getText());
+                next.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (c < questions.getData().getQuestion().size()) {
+                            c++;
+                            textView.setText(questions.getData().getQuestion().get(c).getQuestion());
+                            choice1.setText(questions.getData().getQuestion().get(c).getChoices().get(0).getText());
+                            choice2.setText(questions.getData().getQuestion().get(c).getChoices().get(1).getText());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<Questions> call, Throwable t) {
             }
         });
         return view;
@@ -83,12 +85,6 @@ public class QuestionFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override

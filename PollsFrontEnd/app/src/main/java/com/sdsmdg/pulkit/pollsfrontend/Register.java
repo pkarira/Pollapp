@@ -6,11 +6,11 @@ package com.sdsmdg.pulkit.pollsfrontend;
 
 public class Register {
 
-    String name, pass, email;
+    String name, password, email;
 
     public Register(String name, String pass, String email) {
         this.name = name;
-        this.pass = pass;
+        this.password = pass;
         this.email = email;
     }
 
@@ -23,11 +23,11 @@ public class Register {
     }
 
     public String getPass() {
-        return pass;
+        return password;
     }
 
     public void setPass(String pass) {
-        this.pass = pass;
+        this.password = pass;
     }
 
     public String getEmail() {

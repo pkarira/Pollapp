@@ -1,24 +1,13 @@
 package com.sdsmdg.pulkit.pollsfrontend;
-
+import android.app.FragmentTransaction;
 import android.os.AsyncTask;
+import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
-
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URI;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -28,17 +17,22 @@ public class MainActivity extends AppCompatActivity {
     Button button1;
     Button button2;
     public static String token;
+    EditText name,pass,email;
+    Register register,login;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         button1 = (Button) findViewById(R.id.button);
-        final Register register = new Register("p", "p", "p");
-        final Register login = new Register("p", "p", "p");
+        button2 = (Button) findViewById(R.id.button3);
+        name=(EditText)findViewById(R.id.editText4);
+        pass=(EditText)findViewById(R.id.editText5);
+        email=(EditText)findViewById(R.id.editText6);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                register=new Register(name.getText().toString(),pass.getText().toString(),email.getText().toString());
                 api.Factory.getInstance().register(register).enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, retrofit2.Response<String> response) {
@@ -47,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), "asf", Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -54,16 +49,29 @@ public class MainActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                api.Factory.getInstance().login(login).enqueue(new Callback<Token>() {
+                button1.setVisibility(View.INVISIBLE);
+                button2.setVisibility(View.INVISIBLE);
+                token="Token 80412ad00dcf91d3f3d7b5f51e1670cb1dcfa783";
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                Fragment newFragment = new QuestionFragment();
+                transaction.replace(R.id.fragment, newFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+                login=new Register(name.getText().toString(),pass.getText().toString(),email.getText().toString());
+              /*  api.Factory.getInstance().login(login).enqueue(new Callback<Token>() {
                     @Override
                     public void onResponse(Call<Token> call, retrofit2.Response<Token> response) {
                         if (response.body().getStatus() == 1)
-                            token = " Token "+response.body().getToken()+" ";
+                        {
+                            token = "Token "+response.body().getToken();
+                            Toast.makeText(getApplicationContext(), response.body().getToken(), Toast.LENGTH_LONG).show();
+                            getSupportFragmentManager().beginTransaction().add(R.id.fragment,new QuestionFragment()).commit();
+                        }
                     }
                     @Override
                     public void onFailure(Call<Token> call, Throwable t) {
                     }
-                });
+                });*/
             }
         });
     }
