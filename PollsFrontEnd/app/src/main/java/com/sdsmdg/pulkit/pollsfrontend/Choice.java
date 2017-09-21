@@ -15,6 +15,18 @@ public class Choice {
     @Expose
     private String id;
 
+    public String getVotes() {
+        return votes;
+    }
+
+    public void setVotes(String votes) {
+        this.votes = votes;
+    }
+
+    @SerializedName("votes")
+    @Expose
+    private String votes;
+
     public String getId() {
         return id;
     }
