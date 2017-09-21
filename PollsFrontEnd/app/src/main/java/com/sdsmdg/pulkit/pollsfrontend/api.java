@@ -29,7 +29,7 @@ public interface api {
     Call<Questions> getQuestions(@Header("Authorization") String token);
 
     @POST("polls/vote")
-    Call<String> setVote(@Header("Authorization") String token);
+    Call<String> setVote(@Header("Authorization") String token,@Body Vote v);
 
     class Factory {
         public static api services = null;

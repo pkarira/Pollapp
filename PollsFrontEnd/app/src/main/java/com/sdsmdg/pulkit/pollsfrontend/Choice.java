@@ -11,6 +11,8 @@ public class Choice {
     @SerializedName("text")
     @Expose
     private String text;
+    @SerializedName("id")
+    @Expose
     private String id;
 
     public String getId() {

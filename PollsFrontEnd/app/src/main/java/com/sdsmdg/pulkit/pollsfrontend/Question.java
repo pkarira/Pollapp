@@ -13,7 +13,7 @@ public class Question {
         private String question;
         @SerializedName("id")
         @Expose
-        private Integer id;
+        private String id;
         @SerializedName("choices")
         @Expose
         private List<Choice> choices = null;
@@ -26,11 +26,11 @@ public class Question {
             this.question = question;
         }
 
-        public Integer getId() {
+        public String getId() {
             return id;
         }
 
-        public void setId(Integer id) {
+        public void setId(String id) {
             this.id = id;
         }
 
