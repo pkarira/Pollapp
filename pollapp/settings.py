@@ -25,7 +25,7 @@ SECRET_KEY = 'b4*6l0fd7(oi1nvnpw(=bj^)=z8(9wx1$r=6(ibe5b)ba0&x=l'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '10.42.0.1', 'localhost', '127.0.0.1'
+    '*'
 ]
 
 # Application definition
@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'polls.apps.PollsConfig',
     'django.contrib.admin',
     'rest_framework.authtoken',
+    'rest_framework',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -50,7 +51,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
 ROOT_URLCONF = 'pollapp.urls'
 
 TEMPLATES = [
