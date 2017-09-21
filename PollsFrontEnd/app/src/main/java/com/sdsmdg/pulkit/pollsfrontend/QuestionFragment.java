@@ -51,25 +51,31 @@ public class QuestionFragment extends Fragment {
             @Override
             public void onResponse(Call<Questions> call, retrofit2.Response<Questions> response) {
                 questions = response.body();
+                final Choice firstchoice=questions.getData().getQuestion().get(0).getChoices().get(0);
+                final Choice secchoice=questions.getData().getQuestion().get(0).getChoices().get(1);
                 Toast.makeText(getActivity(), response.body().getData().getQuestion().get(0).getQuestion().toString(), Toast.LENGTH_SHORT).show();
                 textView.setText(questions.getData().getQuestion().get(0).getQuestion());
-                choice1.setText(questions.getData().getQuestion().get(0).getChoices().get(0).getText());
-                choice2.setText(questions.getData().getQuestion().get(0).getChoices().get(1).getText());
+                choice1.setText(choice1.getText());
+                choice2.setText(choice2.getText());
                 next.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (c < questions.getData().getQuestion().size()) {
                             c++;
+                            choice1.setVisibility(View.VISIBLE);
+                            choice2.setVisibility(View.VISIBLE);
                             textView.setText(questions.getData().getQuestion().get(c).getQuestion());
-                            choice1.setText(questions.getData().getQuestion().get(c).getChoices().get(0).getText());
-                            choice2.setText(questions.getData().getQuestion().get(c).getChoices().get(1).getText());
+                            choice1.setText(firstchoice.getText());
+                            choice2.setText(secchoice.getText());
                         }
                     }
                 });
                 choice1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        api.Factory.getInstance().getQuestions(MainActivity.token).enqueue(new Callback<Questions>() {
+                        choice1.setVisibility(View.INVISIBLE);
+                        choice2.setVisibility(View.INVISIBLE);
                     }
                 });
             }

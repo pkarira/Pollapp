@@ -28,6 +28,9 @@ public interface api {
     @POST("polls/questions")
     Call<Questions> getQuestions(@Header("Authorization") String token);
 
+    @POST("polls/vote")
+    Call<String> setVote(@Header("Authorization") String token);
+
     class Factory {
         public static api services = null;
 
