@@ -64,6 +64,24 @@
         android:ems="10"
         android:inputType="textEmailAddress" />
 
+    <Button
+        android:id="@+id/results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button3"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/button3"
+        android:layout_marginBottom="12dp"
+        android:text="Results" />
+
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/results"
+        android:layout_centerHorizontal="true"
+        android:text="Logout" />
+
     <FrameLayout
         android:id="@+id/fragment"
         android:layout_width="fill_parent"

@@ -34,6 +34,9 @@ public interface api {
     @POST("polls/results")
     Call<Results> getResult(@Header("Authorization") String token);
 
+    @POST("polls/logout")
+    Call<String> logout(@Header("Authorization") String token);
+
     class Factory {
         public static api services = null;
 

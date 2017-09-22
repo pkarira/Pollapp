@@ -7,9 +7,9 @@ package com.sdsmdg.pulkit.pollsfrontend;
 public class ResultArray {
     private String id;
 
-    private Choice[] choices;
+    private Choice[] choice;
 
-    private String questions;
+    private String question;
 
     public String getId ()
     {
@@ -23,22 +23,22 @@ public class ResultArray {
 
     public Choice[] getChoices ()
     {
-        return choices;
+        return choice;
     }
 
     public void setChoices (Choice[] choices)
     {
-        this.choices = choices;
+        this.choice = choices;
     }
 
     public String getQuestions ()
     {
-        return questions;
+        return question;
     }
 
-    public void setQuestions (String questions)
+    public void setQuestions (String question)
     {
-        this.questions = questions;
+        this.question = question;
     }
 
 }

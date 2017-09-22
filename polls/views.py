@@ -5,10 +5,8 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
-from rest_framework.authentication import BasicAuthentication, TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
-from rest_framework.permissions import IsAuthenticated
 
 from polls.models import Question, Choice
 
@@ -31,7 +29,7 @@ def totalResults(request):
     singleQuestion = {}
     if request.user.is_authenticated:
         for question in Question.objects.all():
-            singleQuestion["questions"] = question.question_text
+            singleQuestion["question"] = question.question_text
             singleQuestion["id"] = question.id
             for choice in question.choice_set.all():
                 singleChoice["text"] = choice.choice_text
@@ -39,7 +37,7 @@ def totalResults(request):
                 singleChoice["id"] = choice.id
                 choices.append(singleChoice)
                 singleChoice = {}
-            singleQuestion["choices"] = choices
+            singleQuestion["choice"] = choices
             results.append(singleQuestion)
             choices = []
             singleQuestion = {}
@@ -50,8 +48,16 @@ def totalResults(request):
 
 
 @csrf_exempt
+@api_view(['POST'])
+def logout(request):
+    request.user.auth_token.delete()
+    return HttpResponse("You are logged out")
+
+
+@csrf_exempt
+@api_view(['POST'])
 def vote(request):
-    if (request.method == "POST"):
+    if request.user.is_authenticated:
         body = json.loads(request.body)
         question_id = int(body["question_id"])
         choice_id = int(body["choice_id"])
@@ -59,6 +65,8 @@ def vote(request):
         selected_choice.votes += 1
         selected_choice.save()
         return HttpResponse("Done")
+    else:
+        return HttpResponse("Wrong user")
 
 
 @csrf_exempt
@@ -81,11 +89,6 @@ def login(request):
             outerJson["status"] = 0
             outerJson["token"] = "please register"
             return HttpResponse(json.dumps(outerJson), content_type="application/json")
-
-
-def logout(request):
-    request.user.auth_token.delete()
-    return HttpResponse(status=status.HTTP_200_OK)
 
 
 @csrf_exempt
@@ -137,6 +140,7 @@ def getQuestions(request):
         singleQuestion["id"] = question.id
         for choice in question.choice_set.all():
             singleChoice["text"] = choice.choice_text
+            singleChoice["id"] = choice.id
             choices.append(singleChoice)
             singleChoice = {}
         singleQuestion["choices"] = choices
