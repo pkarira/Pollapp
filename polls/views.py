@@ -8,11 +8,11 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
 
-from polls.models import Question, Choice
+from polls.models import Question, Choice, CreateUser
 
 
 def index(request):
-    return HttpResponse("You're looking at question %s.")
+    return HttpResponse("You're looking at quesstion %s.")
 
 
 def detail(request, question_id):
@@ -117,12 +117,15 @@ def register(request):
         name = body["name"]
         email = body["email"]
         password = body["password"]
+        contact=body["contact"]
+        address=body["address"]
         user = authenticate(username=name, password=password)
         if user is not None:
             return HttpResponse("please enter another combination")
         else:
             user = User.objects.create_user(name, email, password)
             user.save()
+            CreateUser.objects.create(user=user,contact=contact,address=address)
             return HttpResponse("registered")
 
 
