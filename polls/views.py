@@ -9,9 +9,11 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
+from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 
 from polls.models import Question, Choice, CreateUser
+from polls.serializer import QuestionSerializer
 
 
 def index(request):
@@ -136,27 +138,31 @@ class Register(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class GetQuestions(APIView):
     def post(self, request):
-        outerJson = {}
-        dataJson = {}
-        questionArray = []
-        choices = []
-        singleChoice = {}
-        singleQuestion = {}
-        for question in Question.objects.all():
-            singleQuestion["question"] = question.question_text
-            singleQuestion["id"] = question.id
-            for choice in question.choice_set.all():
-                singleChoice["text"] = choice.choice_text
-                singleChoice["id"] = choice.id
-                choices.append(singleChoice)
-                singleChoice = {}
-            singleQuestion["choices"] = choices
-            questionArray.append(singleQuestion)
-            choices = []
-            singleQuestion = {}
-        dataJson["question"] = questionArray
-        outerJson["data"] = dataJson
-        return HttpResponse(json.dumps(outerJson), content_type="application/json")
+        questions=Question.objects.all()
+        serializer=QuestionSerializer(questions,many=True)
+        json = JSONRenderer().render(serializer.data)
+        return HttpResponse(json)
+        # outerJson = {}
+        # dataJson = {}
+        # questionArray = []
+        # choices = []
+        # singleChoice = {}
+        # singleQuestion = {}
+        # for question in Question.objects.all():
+        #     singleQuestion["question"] = question.question_text
+        #     singleQuestion["id"] = question.id
+        #     for choice in question.choice_set.all():
+        #         singleChoice["text"] = choice.choice_text
+        #         singleChoice["id"] = choice.id
+        #         choices.append(singleChoice)
+        #         singleChoice = {}
+        #     singleQuestion["choices"] = choices
+        #     questionArray.append(singleQuestion)
+        #     choices = []
+        #     singleQuestion = {}
+        # dataJson["question"] = questionArray
+        # outerJson["data"] = dataJson
+        # return HttpResponse(json.dumps(outerJson), content_type="application/json")
 
 
 def changeChoiceOption(request, choice_id, text):
