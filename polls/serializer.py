@@ -1,6 +1,8 @@
-from rest_framework import serializers
 
-from polls.models import Question, Choice
+from rest_framework import serializers
+from django import forms
+from polls.models import Question, Choice, Document
+
 
 class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,3 +14,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         model=Question
         fields=('question_text','id','choice')
 
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ('description', 'document', )

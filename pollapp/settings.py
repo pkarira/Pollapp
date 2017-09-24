@@ -27,7 +27,11 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '*'
 ]
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 # Application definition
 
 INSTALLED_APPS = [
@@ -87,6 +91,15 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+    # ,
+    # 'default': {
+    #     'ENGINE': 'django_mongodb_engine',
+    #     'NAME': 'questions',
+    #     'USER': 'pulkit',
+    #     'PASSWORD': 'mypassword',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '5432',
+    # }
 }
 
 # Password validation

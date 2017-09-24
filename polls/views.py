@@ -3,9 +3,10 @@ import json
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
-from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import View
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
@@ -13,7 +14,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 
 from polls.models import Question, Choice, CreateUser
-from polls.serializer import QuestionSerializer
+from polls.serializer import QuestionSerializer, DocumentForm
 
 
 def index(request):
@@ -72,6 +73,21 @@ class Vote(APIView):
             return HttpResponse("Done")
         else:
             return HttpResponse("Wrong user")
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FileUpload(APIView):
+    def post(self, request):
+        if request.method == 'POST':
+            form = DocumentForm(request.POST, request.FILES)
+            if form.is_valid():
+                form.save()
+                return redirect('home')
+        else:
+            form = DocumentForm()
+        return render(request, 'core/model_form_upload.html', {
+        'form': form
+    })
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -138,8 +154,8 @@ class Register(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class GetQuestions(APIView):
     def post(self, request):
-        questions=Question.objects.all()
-        serializer=QuestionSerializer(questions,many=True)
+        questions = Question.objects.all()
+        serializer = QuestionSerializer(questions, many=True)
         json = JSONRenderer().render(serializer.data)
         return HttpResponse(json)
         # outerJson = {}
