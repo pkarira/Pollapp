@@ -6,8 +6,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View
-from rest_framework import status
+from django.views.generic import View, ListView
+from requests import Response
+from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import authentication_classes, permission_classes, api_view
 from rest_framework.renderers import JSONRenderer
@@ -86,8 +87,8 @@ class FileUpload(APIView):
         else:
             form = DocumentForm()
         return render(request, 'core/model_form_upload.html', {
-        'form': form
-    })
+            'form': form
+        })
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -152,33 +153,15 @@ class Register(View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class GetQuestions(APIView):
-    def post(self, request):
-        questions = Question.objects.all()
-        serializer = QuestionSerializer(questions, many=True)
-        json = JSONRenderer().render(serializer.data)
-        return HttpResponse(json)
-        # outerJson = {}
-        # dataJson = {}
-        # questionArray = []
-        # choices = []
-        # singleChoice = {}
-        # singleQuestion = {}
-        # for question in Question.objects.all():
-        #     singleQuestion["question"] = question.question_text
-        #     singleQuestion["id"] = question.id
-        #     for choice in question.choice_set.all():
-        #         singleChoice["text"] = choice.choice_text
-        #         singleChoice["id"] = choice.id
-        #         choices.append(singleChoice)
-        #         singleChoice = {}
-        #     singleQuestion["choices"] = choices
-        #     questionArray.append(singleQuestion)
-        #     choices = []
-        #     singleQuestion = {}
-        # dataJson["question"] = questionArray
-        # outerJson["data"] = dataJson
-        # return HttpResponse(json.dumps(outerJson), content_type="application/json")
+class GetQuestions(generics.ListAPIView):
+    serializer_class = QuestionSerializer
+    def get_queryset(self):
+        return Question.objects.all()
+        # def post(self, request):
+        #     questions = Question.objects.all()
+        #     serializer = QuestionSerializer(questions, many=True)
+        #     json = JSONRenderer().render(serializer.data)
+        #     return HttpResponse(json)
 
 
 def changeChoiceOption(request, choice_id, text):
