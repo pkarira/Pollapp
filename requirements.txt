@@ -6,5 +6,6 @@ djangotoolbox==1.8.0
 psutil==1.2.1
 pymongo==2.9.5
 gunicorn==19.6.0
+djangorestframework==3.6.3
 pytz==2017.2
 verlib==0.1
