@@ -115,21 +115,20 @@ class Login(View):
                 return HttpResponse(json.dumps(outerJson), content_type="application/json")
 
 
-@csrf_exempt
-@authentication_classes([])
-@permission_classes([])
-def addQuestion(request):
-    if (request.method == "POST"):
-        body = json.loads(request.body)
-        question = body["question"]["text"]
-        choice1 = body["choice"][0]["text"]
-        choice2 = body["choice"][1]["text"]
-        from django.utils import timezone
-        ques = Question(question_text=question, pub_date=timezone.now())
-        ques.save()
-        ques.choice_set.create(choice_text=choice1, votes=0)
-        ques.choice_set.create(choice_text=choice2, votes=0)
-        return HttpResponse("Done")
+@method_decorator(csrf_exempt, name='dispatch')
+class AddQuestion(generics.CreateAPIView):
+    def addQuestion(request):
+        if (request.method == "POST"):
+            body = json.loads(request.body)
+            question = body["question"]["text"]
+            choice1 = body["choice"][0]["text"]
+            choice2 = body["choice"][1]["text"]
+            from django.utils import timezone
+            ques = Question(question_text=question, pub_date=timezone.now())
+            ques.save()
+            ques.choice_set.create(choice_text=choice1, votes=0)
+            ques.choice_set.create(choice_text=choice2, votes=0)
+            return HttpResponse("Done")
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -155,13 +154,7 @@ class Register(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class GetQuestions(generics.ListAPIView):
     serializer_class = QuestionSerializer
-    def get_queryset(self):
-        return Question.objects.all()
-        # def post(self, request):
-        #     questions = Question.objects.all()
-        #     serializer = QuestionSerializer(questions, many=True)
-        #     json = JSONRenderer().render(serializer.data)
-        #     return HttpResponse(json)
+    queryset = Question.objects.all()
 
 
 def changeChoiceOption(request, choice_id, text):
@@ -176,24 +169,9 @@ def changeQuestion(request, question_id, text):
     question.save()
 
 
-def singleResult(request, question_id):
-    outerJson = {}
-    results = []
-    choices = []
-    singleChoice = {}
-    singleQuestion = {}
-    for question in Question.objects.filter(pk=question_id):
-        singleQuestion["questions"] = question.question_text
-        singleQuestion["id"] = question.id
-        for choice in question.choice_set.all():
-            singleChoice["text"] = choice.choice_text
-            singleChoice["votes"] = choice.votes
-            singleChoice["id"] = choice.id
-            choices.append(singleChoice)
-            singleChoice = {}
-        singleQuestion["choices"] = choices
-        results.append(singleQuestion)
-        choices = []
-        singleQuestion = {}
-    outerJson["results"] = results
-    return HttpResponse(json.dumps(outerJson), content_type="application/json")
+@method_decorator(csrf_exempt, name='dispatch')
+class SingleResults(generics.ListAPIView):
+    serializer_class = QuestionSerializer
+    def get_queryset(self):
+        queryset = Question.objects.filter(pk=self.kwargs['question_id'])
+        return queryset
