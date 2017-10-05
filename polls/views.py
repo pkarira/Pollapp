@@ -6,16 +6,13 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View, ListView
-from requests import Response
+from django.views.generic import View
 from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import authentication_classes, permission_classes, api_view
-from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 
 from polls.models import Question, Choice, CreateUser
-from polls.serializer import QuestionSerializer, DocumentForm
+from polls.serializer import QuestionSerializer
 
 
 def index(request):
@@ -75,22 +72,6 @@ class Vote(APIView):
         else:
             return HttpResponse("Wrong user")
 
-
-@method_decorator(csrf_exempt, name='dispatch')
-class FileUpload(APIView):
-    def post(self, request):
-        if request.method == 'POST':
-            form = DocumentForm(request.POST, request.FILES)
-            if form.is_valid():
-                form.save()
-                return redirect('home')
-        else:
-            form = DocumentForm()
-        return render(request, 'core/model_form_upload.html', {
-            'form': form
-        })
-
-
 @method_decorator(csrf_exempt, name='dispatch')
 class Login(View):
     def dispatch(self, request, *args, **kwargs):
@@ -117,18 +98,7 @@ class Login(View):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class AddQuestion(generics.CreateAPIView):
-    def addQuestion(request):
-        if (request.method == "POST"):
-            body = json.loads(request.body)
-            question = body["question"]["text"]
-            choice1 = body["choice"][0]["text"]
-            choice2 = body["choice"][1]["text"]
-            from django.utils import timezone
-            ques = Question(question_text=question, pub_date=timezone.now())
-            ques.save()
-            ques.choice_set.create(choice_text=choice1, votes=0)
-            ques.choice_set.create(choice_text=choice2, votes=0)
-            return HttpResponse("Done")
+    serializer_class = QuestionSerializer
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -172,6 +142,7 @@ def changeQuestion(request, question_id, text):
 @method_decorator(csrf_exempt, name='dispatch')
 class SingleResults(generics.ListAPIView):
     serializer_class = QuestionSerializer
+
     def get_queryset(self):
         queryset = Question.objects.filter(pk=self.kwargs['question_id'])
         return queryset

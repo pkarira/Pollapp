@@ -1,0 +1,13 @@
+DEBUG=on
+INT_VAR=1010
+DATABASE_URL=psql://pulkit:pulkit/pollappDEBUG=onDEBUG=on
+DATABASE_URL=postgres://pulkit:pulkit/pollapp
+DATABASE_URL=postgres://pulkit:pulkit@localhost:8000/pollapp
+INT_VAR=1010
+DATABASE_URL=postgres://pulkit:pulkit@localhost:8000/pollapp
+DATABASE_URL=postgres://pulkit:pulkit@127.0.0.1:8000/pollappDEBUG=on
+DATABASE=psql://pulkit:pulkit@127.0.0.1:8000/pollapp
+DATABASE=psql://urser:un-githubbedpassword@127.0.0.1:8458/database
+DATABASE_URL=mysql://user:%23password@127.0.0.1:3306/dbname
+DATABASE_URL=psql%3A//urser%3Aun-githubbedpassword%40127.0.0.1%3A8458/database
+DATABASE_URL=mysql://user:23password127.0.0.1:3306/dbname
