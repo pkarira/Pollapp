@@ -9,10 +9,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.views import APIView
 
 from polls.models import Question, Choice, CreateUser
-from polls.serializer import QuestionSerializer
+from polls.serializer import QuestionSerializer, UserSerializer, BaseUserSerializer
 
 
 def index(request):
@@ -73,16 +74,19 @@ class Vote(APIView):
             return HttpResponse("Wrong user")
 
 @method_decorator(csrf_exempt, name='dispatch')
-class Login(View):
+class Login(APIView):
+    permission_classes = []
+    authentication_classes = []
     def dispatch(self, request, *args, **kwargs):
         return super(Login, self).dispatch(request, *args, **kwargs)
 
     def post(self, request):
         if (request.method == "POST"):
             body = json.loads(request.body)
-            name = body["name"]
+            name = body["username"]
             password = body["password"]
-            user = authenticate(username=name, password=password)
+            email = body["email"]
+            user = authenticate(username=name, password=password,email=email)
             outerJson = {}
             if user is not None:
                 Token.objects.create(user=user)
@@ -102,23 +106,10 @@ class AddQuestion(generics.CreateAPIView):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class Register(View):
-    def post(self, request):
-        if (request.method == "POST"):
-            body = json.loads(request.body)
-            name = body["name"]
-            email = body["email"]
-            password = body["password"]
-            contact = body["contact"]
-            address = body["address"]
-            user = authenticate(username=name, password=password)
-            if user is not None:
-                return HttpResponse("please enter another combination")
-            else:
-                user = User.objects.create_user(name, email, password)
-                user.save()
-                CreateUser.objects.create(user=user, contact=contact, address=address)
-                return HttpResponse("registered")
+class Register(generics.CreateAPIView):
+    permission_classes = []
+    authentication_classes = []
+    serializer_class = BaseUserSerializer
 
 
 @method_decorator(csrf_exempt, name='dispatch')
